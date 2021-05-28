@@ -4,6 +4,10 @@ project(nuitrack_core)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
+# For nuitrack
+# add_compile_options(-std=c++11 -D_GLIBCXX_USE_CXX11_ABI=0)
+set(NUITRACK_SDK_PATH /home/davide/davide_ws/src/Mindful/gesture_recognition/nuitrack/nuitrack-sdk) 
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -115,26 +119,29 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
+  # include
+  ${NUITRACK_SDK_PATH}/Nuitrack/include
+  ${NUITRACK_SDK_PATH}/Nuitrack/include/middleware 
   ${catkin_INCLUDE_DIRS}
 )
 
-link_directories(
-  /usr/local/lib/nuitrack
-)
+# link_directories(
+#   /usr/local/lib/nuitrack
+# )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/nuitrack_core.cpp
 # )
 
-add_executable(nuitrack_core_node
-  src/nuitrack_core.cpp
-)
+add_executable(${PROJECT_NAME}_node src/nuitrack_core.cpp)
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(nuitrack_core_node
+target_link_libraries(
+  ${PROJECT_NAME}_node
+  ${NUITRACK_SDK_PATH}/Nuitrack/lib/linux64/libnuitrack.so
+  ${NUITRACK_SDK_PATH}/Nuitrack/lib/linux64/libmiddleware.so
   ${catkin_LIBRARIES}
-  nuitrack
 )
 
 # if(catkin_EXPORTED_LIBRARIES)

@@ -1,7 +1,7 @@
 <launch>
     <arg name="prefix" default="nuitrack" />
-    <arg name="use_openni2" default="true" />
-    <arg name="use_realsense" default="false" />
+    <arg name="use_openni2" default="false" />
+    <arg name="use_realsense" default="true" />
 
     <arg name="offset_x" default="0.0" />
     <arg name="offset_y" default="0.0" />

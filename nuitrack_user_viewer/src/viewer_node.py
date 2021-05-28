@@ -96,28 +96,28 @@ class UserViewer:
         for skeleton in msg.skeletons:
             markers = MarkerArray()
 
-            for i in range(len(skeleton.joints)):
+            for i in range(len(skeleton.joint_names)):
                 marker = Marker()
 
                 marker.header.stamp = rospy.Time.now()
                 marker.header.frame_id = 'nuitrack_link'
-                marker.ns = 'User_%d'%skeleton.id + '_%s'%skeleton.joints[i]
-                marker.id = skeleton.id
+                marker.ns = 'User_%d'%skeleton.user_id + '_%s'%skeleton.joint_names[i]
+                marker.id = skeleton.user_id
                 marker.type = marker.SPHERE
                 marker.action = marker.ADD
 
-                marker.pose.position.x = skeleton.joint_pos[i].z / 1000.0
-                marker.pose.position.y = -1 * skeleton.joint_pos[i].x / 1000.0
-                marker.pose.position.z = skeleton.joint_pos[i].y / 1000.0
+                marker.pose.position.x = skeleton.joint_pos_3D[i].z / 1000.0
+                marker.pose.position.y = -1 * skeleton.joint_pos_3D[i].x / 1000.0
+                marker.pose.position.z = skeleton.joint_pos_3D[i].y / 1000.0
 
                 marker.pose.orientation.w = 1.0
 
-                if skeleton.joints[i] == 'joint_head':
+                if skeleton.joint_names[i] == 'joint_head':
                     marker.scale.x = marker.scale.y = marker.scale.z = 0.16
                 else:
                     marker.scale.x = marker.scale.y = marker.scale.z = 0.04
 
-                hsv = np.uint8([[[skeleton.id * 10, 255, 255]]])
+                hsv = np.uint8([[[skeleton.user_id * 10, 255, 255]]])
                 color = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)[0][0]
 
                 marker.color.a = 0.5
@@ -128,10 +128,10 @@ class UserViewer:
                 markers.markers.append(marker)
 
             draw_joint_lines = [
-                [skeleton.joints.index('joint_head'), skeleton.joints.index('joint_neck'), skeleton.joints.index('joint_torso'), skeleton.joints.index('joint_waist')],
-                [skeleton.joints.index('joint_left_collar'), skeleton.joints.index('joint_left_shoulder'), skeleton.joints.index('joint_left_elbow'), skeleton.joints.index('joint_left_wrist'), skeleton.joints.index('joint_left_hand')],
-                [skeleton.joints.index('joint_right_collar'), skeleton.joints.index('joint_right_shoulder'), skeleton.joints.index('joint_right_elbow'), skeleton.joints.index('joint_right_wrist'), skeleton.joints.index('joint_right_hand')],
-                [skeleton.joints.index('joint_left_ankle'), skeleton.joints.index('joint_left_knee'), skeleton.joints.index('joint_left_hip'), skeleton.joints.index('joint_waist'), skeleton.joints.index('joint_right_hip'), skeleton.joints.index('joint_right_knee'), skeleton.joints.index('joint_right_ankle')],
+                [skeleton.joint_names.index('joint_head'), skeleton.joint_names.index('joint_neck'), skeleton.joint_names.index('joint_torso'), skeleton.joint_names.index('joint_waist')],
+                [skeleton.joint_names.index('joint_left_collar'), skeleton.joint_names.index('joint_left_shoulder'), skeleton.joint_names.index('joint_left_elbow'), skeleton.joint_names.index('joint_left_wrist'), skeleton.joint_names.index('joint_left_hand')],
+                [skeleton.joint_names.index('joint_right_collar'), skeleton.joint_names.index('joint_right_shoulder'), skeleton.joint_names.index('joint_right_elbow'), skeleton.joint_names.index('joint_right_wrist'), skeleton.joint_names.index('joint_right_hand')],
+                [skeleton.joint_names.index('joint_left_ankle'), skeleton.joint_names.index('joint_left_knee'), skeleton.joint_names.index('joint_left_hip'), skeleton.joint_names.index('joint_waist'), skeleton.joint_names.index('joint_right_hip'), skeleton.joint_names.index('joint_right_knee'), skeleton.joint_names.index('joint_right_ankle')],
             ]
 
             for i in range(len(draw_joint_lines)):
@@ -139,8 +139,8 @@ class UserViewer:
 
                 line.header.stamp = rospy.Time.now()
                 line.header.frame_id = 'nuitrack_link'
-                line.ns = 'User_%d'%skeleton.id + '_line%d'%i
-                line.id = skeleton.id
+                line.ns = 'User_%d'%skeleton.user_id + '_line%d'%i
+                line.id = skeleton.user_id
                 line.type = marker.LINE_STRIP
                 line.action = marker.ADD
 
@@ -150,9 +150,9 @@ class UserViewer:
 
                 for j in draw_joint_lines[i]:
                     p = Point()
-                    p.x = skeleton.joint_pos[j].z / 1000.0
-                    p.y = -1 * skeleton.joint_pos[j].x / 1000.0
-                    p.z = skeleton.joint_pos[j].y / 1000.0
+                    p.x = skeleton.joint_pos_3D[j].z / 1000.0
+                    p.y = -1 * skeleton.joint_pos_3D[j].x / 1000.0
+                    p.z = skeleton.joint_pos_3D[j].y / 1000.0
 
                     line.points.append(p)
                 markers.markers.append(line)

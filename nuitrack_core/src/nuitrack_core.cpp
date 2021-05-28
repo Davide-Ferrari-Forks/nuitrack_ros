@@ -171,7 +171,7 @@ private:
 
         img.width = frame->getCols();
         img.height = frame->getRows();
-        img.encoding = "rgb8";
+        img.encoding = "bgr8";
         img.is_bigendian = 0;
         img.step = 3 * frame->getCols();
 
@@ -239,25 +239,34 @@ private:
     {
         nuitrack_msgs::SkeletonDataArray msg;
         msg.header.stamp = ros::Time::now();
-        msg.header.frame_id = 'nuitrack_link';
+        msg.header.frame_id = "nuitrack_link";
 
         auto skeletons = skeletonData->getSkeletons();
         for(size_t i = 0; i < skeletonData->getNumSkeletons(); i++)
         {
             nuitrack_msgs::SkeletonData data;
 
-            data.id = skeletons[i].id;
+            data.user_id = skeletons[i].id;
 
             for(auto const& j : JOINT_NAMES)
             {
-                data.joints.push_back(j.second);
+                data.joint_names.push_back(j.second);
 
-                geometry_msgs::Point p;
-                p.x = skeletons[i].joints[j.first].real.x;
-                p.y = skeletons[i].joints[j.first].real.y;
-                p.z = skeletons[i].joints[j.first].real.z;
+                geometry_msgs::Point p_2D, p_3D;
 
-                data.joint_pos.push_back(p);
+                // 2D Coords (Joint position in normalized projective coordinates (x, y from 0.0 to 1.0, z is real)).
+                p_2D.x = skeletons[i].joints[j.first].proj.x;
+                p_2D.y = skeletons[i].joints[j.first].proj.y;
+                p_2D.z = skeletons[i].joints[j.first].proj.z;
+
+                // 3D Coords (Joint position in real world coordinates.)
+                p_3D.x = skeletons[i].joints[j.first].real.x;
+                p_3D.y = skeletons[i].joints[j.first].real.y;
+                p_3D.z = skeletons[i].joints[j.first].real.z;
+
+                data.joint_pos_2D.push_back(p_2D);
+                data.joint_pos_3D.push_back(p_3D);
+
             }
 
             msg.skeletons.push_back(data);
