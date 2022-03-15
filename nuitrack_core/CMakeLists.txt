@@ -6,7 +6,7 @@ add_compile_options(-std=c++11)
 
 # For nuitrack
 # add_compile_options(-std=c++11 -D_GLIBCXX_USE_CXX11_ABI=0)
-set(NUITRACK_SDK_PATH /home/davide/davide_ws/src/Mindful/gesture_recognition/nuitrack/nuitrack-sdk) 
+set(NUITRACK_SDK_PATH ${CMAKE_SOURCE_DIR}/Mindful/gesture_recognition/nuitrack/nuitrack-sdk) 
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
